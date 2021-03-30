@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [[ $1 == "" ]]; then
+    echo "Please enter a filename!"
+    read file
+else
+    file=$1
+fi
+
+output=`echo $file | awk -F '.' '{print $1}'`.xyz
+
+sed '/^$/d' $file > $output
+sed -i '1,/Atoms/d' $output
+sed -i '1,/Velocities/!d' $output
+sed -i '/Velocities/d' $output
+
+awk '{print $1,$2,$4,$5,$6}' $output > tmp && mv tmp $output
+
+lattice=`echo $file | awk -F '.' '{print $1}'`.lat
+
+xlo=`sed '/xlo/!d' $file | awk '{print $1}'`
+xhi=`sed '/xhi/!d' $file | awk '{print $2}'`
+ylo=`sed '/ylo/!d' $file | awk '{print $1}'`
+yhi=`sed '/yhi/!d' $file | awk '{print $2}'`
+zlo=`sed '/zlo/!d' $file | awk '{print $1}'`
+zhi=`sed '/zhi/!d' $file | awk '{print $2}'`
+
+echo | awk '{print '$xhi' - '$xlo'}' > $lattice
+echo | awk '{print '$yhi' - '$ylo'}' >> $lattice
+echo | awk '{print '$zhi' - '$zlo'}' >> $lattice
