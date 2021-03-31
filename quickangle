@@ -1,0 +1,25 @@
+#!/usr/bin/zsh
+
+if [[ $1 == "" ]]; then
+    echo "Please enter a filename for input data (without ending)!"
+    read name
+else
+    name=$1
+fi
+
+if [[ -f ${name}.cif ]]; then
+    CIFtoXYZ $name
+elif [[ -f ${name}.data ]]; then
+    LAMMPStoXYZ $name.data
+else
+    echo "No suitable input file found"
+    exit 0
+fi
+
+neighbor_list_octahedron.py $name
+neg-angle-tilting.py $name 0 2
+neg-tilts-plot-flex.py $name 0 1 1
+
+rm $name.lat
+rm $name.xyz
+rm ${name}_coordination_*
