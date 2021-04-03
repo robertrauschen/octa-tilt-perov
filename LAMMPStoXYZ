@@ -1,23 +1,35 @@
 #!/bin/bash
 
+# get input file via command line
 if [[ $1 == "" ]]; then
     echo "Please enter a filename!"
     read file
 else
+    # can also be a command line argument
     file=$1
 fi
 
+# generate first output filename with .xyz extension
+# will fail if filename contains additional points
 output=`echo $file | awk -F '.' '{print $1}'`.xyz
 
+# delete all empty lines
 sed '/^$/d' $file > $output
+# delete everything until the line with the "Atoms" keyword (incl.)
 sed -i '1,/Atoms/d' $output
+# delete everything after the "Velocities" keyword 
 sed -i '1,/Velocities/!d' $output
+# delete the line with the "Velocities" keyword
 sed -i '/Velocities/d' $output
+# only atomic coordinates will remain
 
+# delete the third column (charge) from the output file via temporary file
 awk '{print $1,$2,$4,$5,$6}' $output > tmp && mv tmp $output
 
+# generate second output filename with .lat extension
 lattice=`echo $file | awk -F '.' '{print $1}'`.lat
 
+# read the cartesian lattice dimensions as single variables from the input file
 xlo=`sed '/xlo/!d' $file | awk '{print $1}'`
 xhi=`sed '/xhi/!d' $file | awk '{print $2}'`
 ylo=`sed '/ylo/!d' $file | awk '{print $1}'`
@@ -25,6 +37,8 @@ yhi=`sed '/yhi/!d' $file | awk '{print $2}'`
 zlo=`sed '/zlo/!d' $file | awk '{print $1}'`
 zhi=`sed '/zhi/!d' $file | awk '{print $2}'`
 
+# calculate the lattice constants from the difference of higher (xhi) and lower (xlo) dimension
+# store them in separate output file
 echo | awk '{print '$xhi' - '$xlo'}' > $lattice
 echo | awk '{print '$yhi' - '$ylo'}' >> $lattice
 echo | awk '{print '$zhi' - '$zlo'}' >> $lattice
