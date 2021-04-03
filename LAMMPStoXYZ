@@ -2,16 +2,16 @@
 
 # get input file via command line
 if [[ $1 == "" ]]; then
-    echo "Please enter a filename!"
-    read file
+    echo "Please enter a filename (without ending)!"
+    read name
 else
     # can also be a command line argument
-    file=$1
+    name=$1
 fi
 
+file=$(echo ${name}.cif)
 # generate first output filename with .xyz extension
-# will fail if filename contains additional points
-output=`echo $file | awk -F '.' '{print $1}'`.xyz
+output=$(echo ${name}.xyz)
 
 # delete all empty lines
 sed '/^$/d' $file > $output
@@ -27,7 +27,7 @@ sed -i '/Velocities/d' $output
 awk '{print $1,$2,$4,$5,$6}' $output > tmp && mv tmp $output
 
 # generate second output filename with .lat extension
-lattice=`echo $file | awk -F '.' '{print $1}'`.lat
+lattice=$(echo ${name}.lat)
 
 # read the cartesian lattice dimensions as single variables from the input file
 xlo=`sed '/xlo/!d' $file | awk '{print $1}'`

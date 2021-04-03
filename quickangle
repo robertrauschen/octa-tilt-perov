@@ -19,7 +19,7 @@ fi
 if [[ -f ${name}.cif ]]; then
     CIFtoXYZ $name
 elif [[ -f ${name}.data ]]; then
-    LAMMPStoXYZ $name.data
+    LAMMPStoXYZ $name
 else
     # Throw an error message and terminate execution if there is no suitable
     # input file..

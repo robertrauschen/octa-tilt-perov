@@ -1,30 +1,41 @@
 #!/usr/bin/zsh
 
+# get input file via command line
 if [[ $1 == "" ]]; then
     echo "Please enter a cif-filename (without ending)!"
     read name
 else
+    # can also be a command line argument
     name=$1
 fi
 
+# create cif-filename by adding .cif-extension
 file=$(echo ${name}.cif)
 
+# read cell parameters from cif via keyword
 a=$(sed '/_cell_length_a/!d' $file | awk '{print $2}')
 b=$(sed '/_cell_length_b/!d' $file | awk '{print $2}')
 c=$(sed '/_cell_length_c/!d' $file | awk '{print $2}')
 
-#output=`echo $file | awk -F '.' '{print $1}'`.xyz
+# create first output file
 output=$(echo ${name}.xyz)
 
+# delete everything incl. keyword to be left with atomic coordinates
 sed '1,/_atom_site_occupancy/d' $file > $output
 sed -i '/_atom_site_occupancy/d' $output
+# convert format: substitute atomic labels by numbers for universality
+# e.g. "Ca10" will change to "10 1"
 sed -i 's/.*Ca\([0-9]*\)[ ]*/\1 1 /' $output
 sed -i 's/.*Ti\([0-9]*\)[ ]*/\1 2 /' $output
 sed -i 's/.*O\([0-9]*\)[ ]*/\1 3 /' $output
 
+# write atom coordinates into output file
+# multiply with cell parameter to convert from fractional to cartesian
+# format: atom ID, atom type, x, y, z
 awk '{print $1, $2, $3*'$a', $4*'$b', $5*'$c'}' $output > tmp && mv tmp $output
 
-#lattice=`echo $file | awk -F '.' '{print $1}'`.lat
+# create second output file
 lattice=$(echo ${name}.lat)
 
+# write cell parameters to output file
 echo $a "\n" $b "\n" $c > $lattice
