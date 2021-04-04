@@ -4,28 +4,33 @@ import numpy as np
 import sys
 import time
 
+# this code fragment is the most time consuming one and has, therefore, a time log
 start_time = time.time()
 
+# read name of input files from command line
+# file extensions will be added later on
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 else:
     print('Please enter filename.')
     filename = input()
 
-#print ('Please enter type number of centre atom.')
-c_type = 2 # int(input())
+##### Adjust system specific parameters here! #####
 
-#print ('Please enter atom type of first coordination shell.')
-n_type_1 = 3 # int(input())
-#print ('Please enter cutoff radius for first coordination shell.')
-cutoff_1 = 3.0**2 # float(input())**2
-# square because is always used to compare with pythagoreic mean
+# Which atom sits in the centre of the octahedrons?
+c_type = 2
+# Which atom sits on the corners of the octahedron?
+n_type_1 = 3
+# What is the cutoff radius for the first coordination shell?
+cutoff_1 = 3.0**2 # square because is always used to compare with pythagoreic mean
 
-#print ('Please enter atom type of second coordination shell.')
-n_type_2 = 2 # int(input())
-#print ('Please enter cutoff radius for second coordination shell.')
-cutoff_2 = 5.0**2 # float(input())**2
-# square because is always used to compare with pythagoreic mean
+# Which atom sits in the second coordination shell?
+# (Should also be an octahedral coordination.)
+n_type_2 = 2
+# What is the cutoff radius for the second coordination shell?
+cutoff_2 = 5.0**2 # square because is always used to compare with pythagoreic mean
+
+##### Adjust system specific parameters here! #####
 
 # extract data
 data = np.loadtxt(filename + '.xyz')
@@ -34,21 +39,10 @@ lattice = np.loadtxt(filename + '.lat')
 # split data by atom types to enhance performance
 data_types = [[], [], []]
 for i in range(len(data[:,0])):
+    # second column in data array refers to atom type
     data_types[int(data[i][1])-1].append(i)
+# convert to numpy array for performance
 data_types = np.array(data_types, dtype=object)
-
-# count centre atoms
-'''
-centre_atoms = []
-delete_atoms = []
-for i in range(len(data[:,0])):
-    if data[i][1] == c_type:
-        centre_atoms.append(i)
-    elif data[i][1] != n_type_1 and data[i][1] != n_type_2:
-        delete_atoms.append(i)
-data = np.delete(data, delete_atoms, axis=0)
-centre_atoms = np.array(centre_atoms)
-'''
 
 # create list with centre atoms using the type
 centre_atoms = data_types[c_type-1]
@@ -64,6 +58,8 @@ neighbor_2 = np.zeros((len(data[:,0]), 6), dtype=int)
 # variables beginning with an underscore were introduced for performance
 
 for c in range(len(centre_atoms)):
+    # the atoms in the coordination shells are counted because a speed-up is possible
+    # if the maximum number of atoms in one coordination shell is known
     count_1 = 0
     count_2 = 0
 
@@ -75,7 +71,8 @@ for c in range(len(centre_atoms)):
             _centre = data[centre_atoms[c]]
             _neigh = data[n_atoms_1[i]]
             for ax in range(3):
-                _dist_no_pbc = _centre[ax+2] - _neigh[ax+2] 
+                _dist_no_pbc = _centre[ax+2] - _neigh[ax+2]
+                # consider periodic boundary condition (pbc) for distance calculation
                 distance += min(
                     abs(_dist_no_pbc),
                     abs(_dist_no_pbc + lattice[ax]),
@@ -117,6 +114,7 @@ for c in range(len(centre_atoms)):
         # terminate if coordination neighborhood is complete
         if count_2 == 6:
             break
+    # time log for user to monitor progress
     if c%1000 == 0:
         print('atom {} time {}'.format(c, time.time() - start_time))
 

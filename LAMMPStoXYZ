@@ -9,7 +9,9 @@ else
     name=$1
 fi
 
-file=$(echo ${name}.cif)
+# get name of input file by adding file extension 
+file=$(echo ${name}.data)
+
 # generate first output filename with .xyz extension
 output=$(echo ${name}.xyz)
 

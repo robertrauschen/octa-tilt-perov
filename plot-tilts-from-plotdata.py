@@ -6,6 +6,7 @@ from glob import glob
 from statistics import mean, stdev
 import sys
 
+# plotting format standards
 plt.rcParams['font.size'] = 16
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['axes.linewidth'] = 1.0
@@ -13,6 +14,7 @@ plt.rcParams['xtick.labelsize'] = 12
 plt.rcParams['ytick.labelsize'] = 12
 plt.rcParams['text.usetex'] = True
 
+# read input file from command line
 if len(sys.argv) > 1:
     name = sys.argv[1]
 else:
