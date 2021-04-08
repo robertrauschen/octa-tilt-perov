@@ -46,7 +46,7 @@ neg-angle-tilting.py $name 0 2
 # plot the results as a function of the coordinate on that axis. The angles
 # (alpha, beta, gamme) can be turned off manually in the plot by changing
 # the signal in this command accordingly (off=0, on=1).
-neg-tilts-plot-flex.py $name 0 1 1
+tilts-plot-flex.py $name 1 1 1
 
 # remove temporary files
 rm $name.lat
