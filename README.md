@@ -4,7 +4,7 @@ This collection of python scripts is used to analyse perovskite structures in ps
 
 ## Usage
 
-all scripts are made executable
+All scripts are executable. You can add the path of this folder to your ~/.zshrc config-file by adding the following code line. The scripts can be called anywhere from the command line after reloading the with.
 
 1. Call master script
 2. Call scripts individually in the following order:
