@@ -65,6 +65,7 @@ for ax in range(3):
     # find out set-off for chequer
     chequer_setoff[ax] = data[start_oct[0]][ax+2] % Ti_dist[ax]
 
+# a three dimensional checkbord pattern is used to assign the tilt signs
 def chequer(Ti_ID):
     chequer_ID = np.empty(3)
     for ax in range(3):
@@ -92,7 +93,6 @@ def tiltings_from(start_x, start_y, start_z):
                     distance += (axis_coord[ax] - data[i][ax+2])**2
             if distance < ax_tol**2:
                 oct_id.append(i)
-    #print ('Found {} octahedrons on current axis.'.format(len(oct_id)))
 
     # find neighboring Ti and O atoms of octahedron centre and store them in separete 2D lists
 
@@ -209,8 +209,6 @@ def tiltings_from(start_x, start_y, start_z):
             
             arg_ratio[dir] = ( np.dot(a,b) / (np.linalg.norm(a)*np.linalg.norm(b))
                             + np.dot(a2,b2) / (np.linalg.norm(a2)*np.linalg.norm(b2)) ) /2
-            #dot_prod[dir] = np.dot(a,b)
-            #abs_prod[dir] = np.linalg.norm(a)*np.linalg.norm(b)
 
         for ax in range(3):
             arg = 1/arg_ratio[ax] * arg_ratio[(ax+1)%3] * arg_ratio[(ax+2)%3]

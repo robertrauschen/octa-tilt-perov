@@ -68,7 +68,6 @@ def tiltings_from(start_x, start_y, start_z):
                     distance += (axis_coord[ax] - data[i][ax+2])**2
             if distance < ax_tol**2:
                 oct_id.append(i)
-    #print ('Found {} octahedrons on current axis.'.format(len(oct_id)))
 
     # find neighboring Ti and O atoms of octahedron centre and store them in separete 2D lists
 
@@ -165,6 +164,7 @@ def tiltings_from(start_x, start_y, start_z):
             arg = 1/arg_ratio[ax] * arg_ratio[(ax+1)%3] * arg_ratio[(ax+2)%3]
             tilt_angles[c][ax] = np.arccos(np.sqrt(np.abs(arg))*np.sign(arg))
 
+    # convert from radiant to degree
     tilt_angles *= 180/np.pi
     # calculate (180°-theta)/2 to get tilt angle
     tilt_angles /= -2

@@ -4,7 +4,9 @@ import numpy as np
 import sys
 import os
 
+# import external libraries for periodic boundary condition ...
 from pbc import *
+# ... and simple linear algebra
 from geometry import *
 
 directory = 'tilt_angles'
@@ -28,8 +30,6 @@ lattice = np.loadtxt(filename + '.lat')
 neigh_1 = np.loadtxt(filename + '_coordination_1.txt', dtype='int')
 neigh_2 = np.loadtxt(filename + '_coordination_2.txt', dtype='int')
 
-# convert coordinates according to pbc?
-
 print ('Please enter crystallographic axis as a vector.')
 axis = np.zeros(3)
 print ('Please enter x-component.')
@@ -51,16 +51,10 @@ for i in range(len(data[:,0])):
         if abs(distance_to_plane(data[i][2:5], axis, start_coord)) < ax_tol:
             start_oct.append(i)
 print ('Recording tiltings for {} different axes.'.format(len(start_oct)))
-#print(start_oct)
-#exit()
 
 ### function for recording tiltings along an axis starting from a special atom ###
 
 def tiltings_from(start_position):
-    #axis_coord = np.zeros(3)
-    #axis_coord[0] = start_x
-    #axis_coord[1] = start_y
-    #axis_coord[2] = start_z
 
     # find the octahedron centres on the chosen axis
     oct_id = []
@@ -158,16 +152,12 @@ def tiltings_from(start_position):
             
             arg_ratio[dir] = ( np.dot(a,b) / (np.linalg.norm(a)*np.linalg.norm(b))
                             + np.dot(a2,b2) / (np.linalg.norm(a2)*np.linalg.norm(b2)) ) /2
-            #dot_prod[dir] = np.dot(a,b)
-            #abs_prod[dir] = np.linalg.norm(a)*np.linalg.norm(b)
-        #print(arg_ratio)
-        #exit()
 
         for ax in range(3):
             arg = 1/arg_ratio[ax] * arg_ratio[(ax+1)%3] * arg_ratio[(ax+2)%3]
-            #arg = abs_prod[ax]/dot_prod[ax] * dot_prod[(ax+1)%3]/abs_prod[(ax+1)%3] * dot_prod[(ax+2)%3]/abs_prod[(ax+2)%3]
             tilt_angles[c][ax] = np.arccos(np.sqrt(np.abs(arg))*np.sign(arg))
 
+    # convert from radiant to degree
     tilt_angles *= 180/np.pi
     # calculate (180°-theta)/2 to get tilt angle
     tilt_angles /= -2
