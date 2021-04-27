@@ -1,10 +1,11 @@
-#!/usr/bin/zsh
+#!/usr/bin/bash
 
-'''
-This is a master-script to call the other python scripts with a single
-command. Default options will be used so make sure if they are appropriate
-for your task.
-'''
+# This is a master-script to call the other python scripts with a single
+# command. Default options will be used so make sure if they are appropriate
+# for your task.
+
+### Adjust this path to the location you chose for installation! ###
+path="/home/rr418961/Programme/octa-tilt-perov"
 
 # read input file via command line
 if [[ $1 == "" ]]; then
@@ -17,9 +18,9 @@ fi
 # Call the appropriate conversion script to get the correct input files for
 # the python scripts. The code can cope with CIF-data or LAMMPS-datafiles.
 if [[ -f ${name}.cif ]]; then
-    CIFtoXYZ $name
+    $path/CIFtoXYZ $name
 elif [[ -f ${name}.data ]]; then
-    LAMMPStoXYZ $name
+    $path/LAMMPStoXYZ $name
 else
     # Throw an error message and terminate execution if there is no suitable
     # input file..
@@ -29,24 +30,22 @@ fi
 
 # generate temporary files with coordination environment of atoms
 # (most time consuming step)
-neighbor_list_octahedron.py $name
+$path/neighbor-list-octahedron.py $name
 
-'''
-Decide if the tilt sign is relevant for you and call the according scripts
-here. The scripts that explicitly calculate the tilt sign have the prefix
-"neg-".
-'''
+# Decide if the tilt sign is relevant for you and call the according scripts
+# here. The scripts that explicitly calculate the tilt sign have the prefix
+# "neg-".
 
 # Calculate all tilt angles individually and store them in a temporary
 # "tilt-angles" folder. The first number specifies the axis along which the
 # results are organised (x=0, y=1, z=2) and the second number specifies the
 # coordinate of the starting plane. 
-neg-angle-tilting.py $name 0 2
+$path/neg-angle-tilting.py $name 0 2
 # Average the tilt angles in planes perpendicular to the chosen axis and
 # plot the results as a function of the coordinate on that axis. The angles
 # (alpha, beta, gamme) can be turned off manually in the plot by changing
 # the signal in this command accordingly (off=0, on=1).
-tilts-plot-flex.py $name 1 1 1
+$path/tilts-plot-flex.py $name 1 1 1
 
 # remove temporary files
 rm $name.lat
