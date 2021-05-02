@@ -109,16 +109,23 @@ def tiltings_from(start_position):
                     neigh_1_vec[ax] = per_d(per_x(data[ neigh_1_id ][ax+2], lattice[ax]), predict_O[p][ax], lattice[ax])
                     neigh_2_vec[ax] = per_d(per_x(data[ neigh_2_id ][ax+2], lattice[ax]), predict_Ti[p][ax], lattice[ax])
                     
-                if np.linalg.norm(neigh_1_vec) < 1:
+                # skip vacant sites (labelled as 0 in coordination analysis)
+                if np.linalg.norm(neigh_1_vec) < 1 and not neigh_1_id == 0:
                     neighbor_O[c][p] = neigh_1_id
 
-                if np.linalg.norm(neigh_2_vec) < 1:
+                if np.linalg.norm(neigh_2_vec) < 1 and not neigh_2_id == 0:
                     neighbor_Ti[c][p] = neigh_2_id
 
     # store tilt_angles in 2D-array
     tilt_angles = np.empty((len(oct_id), 3))
 
     for c in range(len(oct_id)):
+        # skip if there is an oxygen/titanium vacancy next to the Ti atom!
+        if (neighbor_O[c] == 0).any() or (neighbor_Ti[c] == 0).any():
+            tilt_angles[c].fill(np.nan)
+            print('Skipping octahedron {} due to vacancy.'.format(c))
+            continue
+
         # argument for use in arccos refers to the term (vec(a)*vec(b))/(a*b)
         arg_ratio = np.zeros(3)
         for dir in range(3):
