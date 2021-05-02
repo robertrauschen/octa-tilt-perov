@@ -170,7 +170,7 @@ def tiltings_from(start_position):
             filename, start_position[0], start_position[1], start_position[2]), 'w') as f:
         sys.stdout = f
         # print dummy row to ensure 2-dimensionality of file
-        print ('0 0 0 0')
+        print ('nan nan nan nan')
         for t in range(len(tilt_angles)):
             # record distance from starting plane as first entry
             print ('{} {} {} {}'.format(

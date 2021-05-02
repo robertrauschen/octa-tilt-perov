@@ -75,7 +75,8 @@ for f in data_files:
             # append all octahedrons within a certain threshold to the pre-
             # defined positions (skip nans because they impede averaging)
             if abs(positions[p] - data[row][0]) < 1:
-                pos[p].append(data[row][0])
+                if not np.isnan(data[row][0]):
+                    pos[p].append(data[row][0])
                 if not np.isnan(data[row][1]):
                     a[p].append(data[row][1])
                 if not np.isnan(data[row][2]):
@@ -117,7 +118,7 @@ for i in range(len(positions)):
 # dump plot data in extra file
 # data format: pos alpha beta gamma err_alpha err_beta err_gamma
 original_stdout = sys.stdout
-with open('{}_neg.plotdata'.format(name), 'w') as f:
+with open('{}.plotdata'.format(name), 'w') as f:
     sys.stdout = f
     for i in range(len(positions)):
         print ('{} {} {} {} {} {} {}'.format(

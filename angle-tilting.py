@@ -98,6 +98,7 @@ def tiltings_from(start_x, start_y, start_z):
         for p in range(6):
             # loop over (max) 6 atom IDs from coordination analysis
             for n in range(6):
+                # skip vacant sites (labelled as 0 in coordination analysis)
                 distance_O = 0.0
                 distance_Ti = 0.0
                 # neighbor files have same atom IDs as data file! (-> row index in neigh = oct_id[c])
@@ -111,20 +112,22 @@ def tiltings_from(start_x, start_y, start_z):
                     # use pbc function for distance calculation
                     neigh_1_vec[ax] = per_d(per_x(data[ neigh_1_id ][ax+2], lattice[ax]), predict_O[p][ax], lattice[ax])
                     neigh_2_vec[ax] = per_d(per_x(data[ neigh_2_id ][ax+2], lattice[ax]), predict_Ti[p][ax], lattice[ax])
-                    
-                if np.linalg.norm(neigh_1_vec) < 1:
+
+                # skip vacant sites (labelled as 0 in coordination analysis)
+                if np.linalg.norm(neigh_1_vec) < 1 and not neigh_1_id == 0:
                     neighbor_O[c][p] = neigh_1_id
 
-                if np.linalg.norm(neigh_2_vec) < 1:
+                if np.linalg.norm(neigh_2_vec) < 1 and not neigh_2_id == 0:
                     neighbor_Ti[c][p] = neigh_2_id
 
     # store tilt_angles in 2D-array
     tilt_angles = np.empty((len(oct_id), 3))
 
     for c in range(len(oct_id)):
-        # skip if there is an oxygen vacancy next to the Ti atom!
-        if (neighbor_O[c] == 0).any():
+        # skip if there is an oxygen/titanium vacancy next to the Ti atom!
+        if (neighbor_O[c] == 0).any() or (neighbor_Ti[c] == 0).any():
             tilt_angles[c].fill(np.nan)
+            print('Skipping octahedron {} due to vacancy.'.format(c))
             continue
 
         # argument for use in arccos refers to the term (vec(a)*vec(b))/(a*b)
@@ -177,7 +180,7 @@ def tiltings_from(start_x, start_y, start_z):
             filename, axis_coord[0], axis_coord[1], axis_coord[2]), 'w') as f:
         sys.stdout = f
         # print dummy row to ensure 2-dimensionality of file
-        print ('0 0 0 0')
+        print ('nan nan nan nan')
         for t in range(len(tilt_angles)):
             print ('{} {} {} {}'.format(
                 data[oct_id[t]][axis+2], tilt_angles[t][0], tilt_angles[t][1], tilt_angles[t][2]))

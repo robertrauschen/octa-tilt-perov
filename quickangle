@@ -40,7 +40,7 @@ $path/neighbor-list-octahedron.py $name
 # "tilt-angles" folder. The first number specifies the axis along which the
 # results are organised (x=0, y=1, z=2) and the second number specifies the
 # coordinate of the starting plane. 
-$path/neg-angle-tilting.py $name 0 2
+$path/angle-tilting.py $name 0 2
 # Average the tilt angles in planes perpendicular to the chosen axis and
 # plot the results as a function of the coordinate on that axis. The angles
 # (alpha, beta, gamme) can be turned off manually in the plot by changing

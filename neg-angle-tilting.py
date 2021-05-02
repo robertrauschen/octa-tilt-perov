@@ -234,7 +234,7 @@ def tiltings_from(start_x, start_y, start_z):
             filename, axis_coord[0], axis_coord[1], axis_coord[2]), 'w') as f:
         sys.stdout = f
         # print dummy row to ensure 2-dimensionality of file
-        print ('0 0 0 0')
+        print ('nan nan nan nan')
         for t in range(len(tilt_angles)):
             print ('{} {} {} {}'.format(
                 data[oct_id[t]][axis+2], tilt_angles[t][0], tilt_angles[t][1], tilt_angles[t][2]))
