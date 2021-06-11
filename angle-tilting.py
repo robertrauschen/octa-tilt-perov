@@ -50,6 +50,9 @@ print ('Recording tiltings for {} different axes.'.format(len(start_oct)))
 ### function for recording tiltings along an axis starting from a special atom ###
 
 def tiltings_from(start_x, start_y, start_z):
+    # initialise vacancy counter
+    vac = 0
+
     axis_coord = np.zeros(3)
     axis_coord[0] = start_x
     axis_coord[1] = start_y
@@ -127,7 +130,8 @@ def tiltings_from(start_x, start_y, start_z):
         # skip if there is an oxygen/titanium vacancy next to the Ti atom!
         if (neighbor_O[c] == 0).any() or (neighbor_Ti[c] == 0).any():
             tilt_angles[c].fill(np.nan)
-            print('Skipping octahedron {} due to vacancy.'.format(c))
+            vac += 1
+            #print('Skipping octahedron {} due to vacancy.'.format(c))
             continue
 
         # argument for use in arccos refers to the term (vec(a)*vec(b))/(a*b)
@@ -185,11 +189,17 @@ def tiltings_from(start_x, start_y, start_z):
             print ('{} {} {} {}'.format(
                 data[oct_id[t]][axis+2], tilt_angles[t][0], tilt_angles[t][1], tilt_angles[t][2]))
         sys.stdout = original_stdout
+
+    # vacancy count is returned to sum up axes later on
+    return vac
         
-### call main function for different starting positions now ###        
+### call main function for different starting positions now ###
 
 # record tiltings along the axes starting from the plane
+vac_total = 0
 for s in range(len(start_oct)):
-    tiltings_from(data[start_oct[s]][2], data[start_oct[s]][3], data[start_oct[s]][4])
+    vac_total += tiltings_from(data[start_oct[s]][2], data[start_oct[s]][3], data[start_oct[s]][4])
     if (s+1)%50 == 0:
         print ('Axis {}/{} complete.'.format(s+1, len(start_oct)))
+
+print ('{} octahedrons were skipped due to vacancies.'.format(vac_total))

@@ -47,7 +47,8 @@ if beta == 1:
 if gamma == 1:
     plt.errorbar(data[:,0], data[:,3], yerr=data[:,6], fmt='.', label=r'$\gamma$')
 
-plt.xlabel(r'position / $\mathrm{\AA}$')
+#plt.xlabel(r'position / $\mathrm{\AA}$')
+plt.xlabel(r'T / K')
 plt.ylabel(r'tilt angle / °')
 #plt.xlim(-5,155)
 #plt.ylim(-10,10)
@@ -56,4 +57,4 @@ plt.legend(fancybox=True, framealpha=1, shadow=True, borderpad=1)
 plt.grid(True, linewidth=.4, alpha=.5)
 #plt.title(name.split('_')[1])
 #plt.title(name)
-plt.savefig('{}_neg.png'.format(name), bbox_inches='tight')
+plt.savefig('{}.png'.format(name), bbox_inches='tight')
